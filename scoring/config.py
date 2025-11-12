@@ -11,7 +11,7 @@ COMPILER = "g++"
 COMPILER_FLAGS = ["-std=c++23", "-O3", "-static"]
 
 # Test configuration
-CLEANUP_AFTER = True  # Set to False if you want to keep temporary files
+CLEANUP_AFTER = False  # Set to False if you want to keep temporary files
 
 # Output configuration
 RESULTS_FORMAT = "json"  # Options: "json", "txt", "both"

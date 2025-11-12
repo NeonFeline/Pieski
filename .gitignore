@@ -23,3 +23,5 @@ Makefile
 compile_commands.json
 CMakeSettings.json
 temp/
+
+scoring/config.py

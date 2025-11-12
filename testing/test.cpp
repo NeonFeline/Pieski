@@ -1,24 +1,8 @@
 #include <bits/stdc++.h>
+#include "../prime.hpp"
 using namespace std;
 
-const int MAX_N = 100000;
-bool is_prime[100001];
-
-void precompute_primes() {
-    memset(is_prime, true, sizeof(is_prime));
-    is_prime[0] = false;
-    is_prime[1] = false;
-    for (int i = 2; i * i <= MAX_N; i++) {
-        if (is_prime[i]) {
-            for (int j = i * i; j <= MAX_N; j += i) {
-                is_prime[j] = false;
-            }
-        }
-    }
-}
-
 int main() {
-    precompute_primes();
 
     int N, M;
     cin >> N >> M;
@@ -60,7 +44,7 @@ int main() {
         int w1 = edge_weights.first;
         int w2 = edge_weights.second;
         int edge_index = i + 1;
-        if (is_prime[edge_index]) {
+        if (prime_table[edge_index]) {
             total_cost += 3 * w2;
         } else {
             total_cost += w1;

@@ -20,4 +20,4 @@ static constexpr std::bitset<MAX_PRIME + 1> generatePrimeTable() {
     return table;
 }
 
-constexpr auto primeTable = generatePrimeTable();
+constexpr auto prime_table = generatePrimeTable();

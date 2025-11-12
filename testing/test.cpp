@@ -23,6 +23,10 @@ int main() {
     int N, M;
     cin >> N >> M;
 
+    // Skip the next line (0 3) which appears to be source and destination
+    int src, dest;
+    cin >> src >> dest;
+
     vector<unordered_map<int, pair<int, int>>> graph(N + 1);
 
     for (int i = 0; i < M; i++) {

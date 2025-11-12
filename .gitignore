@@ -25,3 +25,4 @@ CMakeSettings.json
 temp/
 
 scoring/config.py
+*.pyc

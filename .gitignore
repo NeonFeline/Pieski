@@ -22,3 +22,4 @@ CTestTestfile.cmake
 Makefile
 compile_commands.json
 CMakeSettings.json
+temp/

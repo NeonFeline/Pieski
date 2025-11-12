@@ -2,6 +2,7 @@
 !.git/
 .*
 !.gitignore
+.vscode
 
 test.cpp
 

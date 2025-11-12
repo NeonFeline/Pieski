@@ -1,9 +1,30 @@
 {
+  "qwen": {
+    "test25.in": 112333.0,
+    "test24.in": 1e+18,
+    "test26.in": 1e+18,
+    "test34.in": 1e+18,
+    "test33.in": 48105.0
+  },
   "gpt1": {
     "test25.in": 88646.0,
     "test24.in": 432.0,
     "test26.in": 384.0,
     "test34.in": 7038.0,
     "test33.in": 34377.0
+  },
+  "qwen2": {
+    "test25.in": 109107.0,
+    "test24.in": 1e+18,
+    "test26.in": 1e+18,
+    "test34.in": 1e+18,
+    "test33.in": 48595.0
+  },
+  "qwen3": {
+    "test25.in": 1e+18,
+    "test24.in": 1e+18,
+    "test26.in": 1e+18,
+    "test34.in": 1e+18,
+    "test33.in": 1e+18
   }
 }

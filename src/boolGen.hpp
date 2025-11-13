@@ -4,10 +4,10 @@
 
 class BooleanGenerator {
 public:
-    BooleanGenerator(double probability = 0.5)
-        : dist(probability), rng(std::random_device{}()), probDist(0.6f, 1.0f) {}
+    BooleanGenerator(double start_probability = 0.5, double min_probability = 0.5)
+        : dist(start_probability), rng(std::random_device{}()), probDist(min_probability, 1.0f) {}
 
-    bool next() {
+    bool next() noexcept {
         return dist(rng);
     }
 

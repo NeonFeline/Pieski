@@ -2,7 +2,7 @@
 #include <bitset>
 #include <cmath>
 
-constexpr std::size_t MAX_PRIME = 100000;
+constexpr size_t MAX_PRIME = 100000;
 
 static constexpr std::bitset<MAX_PRIME + 1> generatePrimeTable() {
     std::bitset<MAX_PRIME + 1> table;
@@ -20,4 +20,4 @@ static constexpr std::bitset<MAX_PRIME + 1> generatePrimeTable() {
     return table;
 }
 
-constexpr auto prime_table = generatePrimeTable();
+auto prime_table = generatePrimeTable();

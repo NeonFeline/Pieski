@@ -1,0 +1,76 @@
+## Problem Statement
+
+**Task:** Given a graph `G` with `N` nodes and `M` edges, find an **acyclic path** from source `A` to destination `B` that **minimizes the Blackie-length**.
+
+### Blackie-Length Definition
+
+Each edge `e` has two positive integers: `w1(e)` and `w2(e)`. For a path `P` consisting of edges `e1, e2, …, ek`:
+
+* `A = sum(w1(ei))` over edges where `i` is **not prime**
+* `B = 3 * sum(w2(ei))` over edges where `i` **is prime**
+* Blackie-length = `A + B`
+
+> **Important:** The path **must be acyclic**. Cycles are forbidden.
+
+### Input
+
+```
+N M
+A B
+u1 v1 w1_1 w2_1
+u2 v2 w1_2 w2_2
+...
+uM vM w1_M w2_M
+```
+
+* `N` — nodes (1 ≤ N ≤ 10^5)
+* `M` — edges (1 ≤ M ≤ 10^6)
+* `A, B` — source and destination node IDs
+* Each edge: `u v w1 w2`
+
+### Output
+
+```
+k
+n1 n2 ... nk
+```
+
+* `k` — number of nodes in the path
+* `n1 ... nk` — node IDs from `A` to `B`
+
+### Constraints
+
+* Path **must be acyclic**
+* Efficient algorithms required (large N, M)
+* Time limit: 20 seconds
+
+### Example
+
+**Input:**
+
+```
+4 5
+0 3
+0 1 1 5
+1 3 1 5
+0 2 5 1
+2 3 5 1
+1 2 1 1
+```
+
+**Output:**
+
+```
+4
+0 1 2 3
+```
+
+**Score Calculation:**
+
+Edges: `e1=0→1`, `e2=1→2`, `e3=2→3`
+
+* `A = w1(e1) = 1`
+* `B = 3 * (w2(e2) + w2(e3)) = 3 * (1+1) = 6`
+
+**Blackie-length = 1 + 6 = 7**
+

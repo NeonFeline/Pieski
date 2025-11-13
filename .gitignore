@@ -30,3 +30,7 @@ scoring/config.py
 =======
 __py*
 >>>>>>> test
+
+examples/
+.idea
+codes/

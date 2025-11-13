@@ -24,10 +24,7 @@ Makefile
 compile_commands.json
 CMakeSettings.json
 temp/
-<<<<<<< HEAD
 
 scoring/config.py
 *.pyc
-=======
 __py*
->>>>>>> test

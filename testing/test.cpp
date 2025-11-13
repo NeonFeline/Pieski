@@ -2,12 +2,15 @@
 #include "../prime.hpp"
 using namespace std;
 
+const long long PENALTY = 1000000000000000000LL; // 1e18
+
 int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
 
     int N, M;
     cin >> N >> M;
 
-    // Skip the next line (0 3) which appears to be source and destination
     int src, dest;
     cin >> src >> dest;
 
@@ -16,8 +19,8 @@ int main() {
     for (int i = 0; i < M; i++) {
         int u, v, w1, w2;
         cin >> u >> v >> w1 >> w2;
-        graph[u][v] = {w1, w2};
-        graph[v][u] = {w1, w2};
+        graph[u][v] = make_pair(w1, w2);
+        graph[v][u] = make_pair(w1, w2);
     }
 
     int k;
@@ -27,25 +30,44 @@ int main() {
         cin >> path[i];
     }
 
-    if (k < 2) {
+    if (k == 0) {
+        cout << PENALTY << endl;
+        return 0;
+    }
+
+    if (path[0] != src || path[k-1] != dest) {
+        cout << PENALTY << endl;
+        return 0;
+    }
+
+    if (k == 1) {
         cout << 0 << endl;
         return 0;
+    }
+
+    unordered_set<int> seen;
+    for (int i = 0; i < k; i++) {
+        if (seen.find(path[i]) != seen.end()) {
+            cout << PENALTY << endl;
+            return 0;
+        }
+        seen.insert(path[i]);
     }
 
     long long total_cost = 0;
     for (int i = 0; i < k - 1; i++) {
         int u = path[i];
-        int v = path[i + 1];
+        int v = path[i+1];
         if (graph[u].find(v) == graph[u].end()) {
-            cerr << "Error: no edge between " << u << " and " << v << endl;
-            return 1;
+            cout << PENALTY << endl;
+            return 0;
         }
         auto edge_weights = graph[u][v];
         int w1 = edge_weights.first;
         int w2 = edge_weights.second;
         int edge_index = i + 1;
         if (prime_table[edge_index]) {
-            total_cost += 3 * w2;
+            total_cost += 3LL * w2;
         } else {
             total_cost += w1;
         }

@@ -29,7 +29,6 @@ scoring/config.py
 *.pyc
 __py*
 
-examples/
 .idea
 codes/
 

@@ -8,9 +8,10 @@
 #include <algorithm>
 #include <stack>
 
-#include "../prime.hpp"
-#include "../readInput.hpp"
-#include "../boolGen.hpp"
+#include "../src/prime.hpp"
+#include "../src/readInput.hpp"
+#include "../src/boolGen.hpp"
+#include "../src/bitmask.hpp"
 
 std::atomic<bool> timeout(false);
 
@@ -21,7 +22,8 @@ void timer(int seconds) {
 
 
 void dijkstra(
-        const adjList_t& node_connections, const size_t source_node, const size_t target_node, 
+        const adjList_t& node_connections, const Bitmask& node_bitmask,
+        const size_t source_node, const size_t target_node, 
         size_t& best_blackie_len, std::vector<size_t>& best_path) {
 
     const size_t nodes_n = node_connections.size();
@@ -45,7 +47,7 @@ void dijkstra(
         if (++iterations % 1000 == 0 and timeout) break;
 
         for (auto [weight, other_node]: node_connections[cur_node]) {
-            if (not times_visited_left[other_node]) continue;
+            if (not times_visited_left[other_node] or not node_bitmask[other_node]) continue;
 
             if (nextEdgePrime) weight *= 3;
             const size_t new_blackie_len = cur_blackie_len + weight;
@@ -83,26 +85,16 @@ int main() {
     size_t best_blackie_len = std::numeric_limits<size_t>::max();
     std::vector<size_t> best_path;
 
-    dijkstra(node_connections, source_node, target_node, best_blackie_len, best_path);
+    BooleanGenerator gen(1.0, 0.88);
 
-    BooleanGenerator gen(0.88);
-
-    size_t counter = 0;
+    // size_t counter = 0;
+    Bitmask node_bitmask(nodes_n, gen);
     while (not timeout) {
-        adjList_t changed_node_connections (nodes_n, std::vector<std::pair<size_t, size_t>>());
- 
-
-        for (size_t i = 0; i < nodes_n; i++) {
-            auto& other_nodes = node_connections[i];
-            for (auto& other_node: other_nodes) {
-                if (gen.next()) {
-                    changed_node_connections[i].push_back(other_node);
-                }
-            }
-        } 
-
-        dijkstra(changed_node_connections, source_node, target_node, best_blackie_len, best_path);
+        dijkstra(node_connections, node_bitmask, source_node, target_node, best_blackie_len, best_path);
         gen.change_probability();
+
+        node_bitmask.reshuffle_bits(gen);
+        node_bitmask.set(source_node), node_bitmask.set(target_node);
     }
 
     

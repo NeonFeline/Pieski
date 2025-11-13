@@ -112,9 +112,11 @@ def evolve_population(population):
 
 # --- Main evolutionary loop ---
 if __name__ == "__main__":
-    generations = 5
 
-    for gen in range(generations):
+    for gen in range(config.GENERATIONS):
+        # Evolve
+        population = evolve_population(population)
+
         print(f"=== Generation {gen + 1} ===")
         results = evaluate_population(population)
         population = sort_population(population)
@@ -128,10 +130,6 @@ if __name__ == "__main__":
         for idx, sol in enumerate(population):
             print(f"Solution {idx + 1} fitness: {sol.fitness}")
         print("----------------------------")
-
-        # Evolve and re-evaluate new population
-        population = evolve_population(population)
-        evaluate_population(population)
 
         # Save all current generation solutions
         for idx, sol in enumerate(population):

@@ -64,6 +64,7 @@ RESULTS_FILENAME = "test_results.json"
 # Evolution configuration
 # ────────────────────────────────
 # Population size for evolutionary algorithm
-POPULATION_SIZE = 5
+POPULATION_SIZE = 10
+GENERATIONS = 25
 EVOLUTION_OUTPUT_DIR = "evolution_results"
-MUTATION_CHANCE = 0.5  # Probability of mutation per individual
+MUTATION_CHANCE = 0.25  # Probability of mutation per individual

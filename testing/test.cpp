@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "../prime.hpp"
+#include "../src/prime.hpp"
 using namespace std;
 
 const long long PENALTY = 1000000000000000000LL; // 1e18

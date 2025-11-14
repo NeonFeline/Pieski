@@ -28,9 +28,24 @@ void dijkstra(
 
     const size_t nodes_n = node_connections.size();
     
-    using conn_t = std::tuple<size_t, size_t, size_t>; // current blackie len, next node, current amount of edges
+    struct conn_t {
+        size_t current_blackie_len;
+        size_t next_node;
+        size_t cur_edges_n;
 
-    std::stack<conn_t> to_visit ({ {0, source_node, 0} });
+        conn_t(size_t current_blackie_len, size_t next_node, size_t cur_edges_n) : 
+            current_blackie_len(current_blackie_len), 
+            next_node(next_node),
+            cur_edges_n(cur_edges_n) {}
+
+        bool operator<(const conn_t& other) const {
+            return current_blackie_len > other.current_blackie_len; 
+        }
+    };
+
+    std::priority_queue<conn_t> to_visit;
+    to_visit.push( {0, source_node, 0} );
+
     std::vector<size_t> parents (nodes_n, 0);
     std::vector<size_t> distances (nodes_n, std::numeric_limits<size_t>::max());
     std::vector<int> times_visited_left (nodes_n, 1);
@@ -38,7 +53,7 @@ void dijkstra(
 
     size_t iterations = 0;
     while (not to_visit.empty()) {
-        const auto [cur_blackie_len, cur_node, cur_edges_n] = std::move(to_visit.top());
+        const auto [cur_blackie_len, cur_node, cur_edges_n] = to_visit.top();
         to_visit.pop();
 
         times_visited_left[cur_node]--;

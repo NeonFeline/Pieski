@@ -1,12 +1,10 @@
 #include <iostream>
 #include <vector>
-#include <utility>
 #include <thread>
 #include <queue>
 #include <limits>
 #include <atomic>
 #include <algorithm>
-#include <stack>
 
 #include "prime.hpp"
 #include "readInput.hpp"
@@ -22,7 +20,7 @@ void timer(int seconds) {
 
 
 void dijkstra(
-        const adjList_t& node_connections, const std::vector<Bitmask>& edge_bitmasks,
+        const adjList_t& node_connections, const Bitmask& edge_bitmask,
         const size_t source_node, const size_t target_node, 
         size_t& best_blackie_len, std::vector<size_t>& best_path) {
 
@@ -56,6 +54,8 @@ void dijkstra(
         const auto [cur_blackie_len, cur_node, cur_edges_n] = to_visit.top();
         to_visit.pop();
 
+        if (cur_node == target_node) break;
+
         times_visited_left[cur_node]--;
         const bool nextEdgePrime = prime_table[cur_edges_n + 1];
 
@@ -63,9 +63,9 @@ void dijkstra(
 
         // for (auto [weight, other_node]: node_connections[cur_node]) {
         for (size_t i = 0; i < node_connections[cur_node].size(); i++) {
-            auto [weight, other_node] = node_connections[cur_node][i];
+            auto [weight, other_node, edge_id] = node_connections[cur_node][i];
 
-            if (not times_visited_left[other_node] or not edge_bitmasks[cur_node][i]) continue;
+            if (not times_visited_left[other_node] or not edge_bitmask[edge_id]) continue;
 
             if (nextEdgePrime) weight *= 3;
             const size_t new_blackie_len = cur_blackie_len + weight;
@@ -75,7 +75,6 @@ void dijkstra(
             distances[other_node] = new_blackie_len;
             parents[other_node] = cur_node;
 
-            if (other_node == target_node) break;
             to_visit.emplace(new_blackie_len, other_node, cur_edges_n + 1);
         }
     }
@@ -95,9 +94,8 @@ void dijkstra(
 int main() {
 
     task_t task = read_input();
-    auto& [node_connections, source_node, target_node] = task;
+    auto& [node_connections, source_node, target_node, nodes_n, edges_n] = task;
 
-    const size_t nodes_n = node_connections.size();
     std::thread t(timer, 19);
 
     size_t best_blackie_len = std::numeric_limits<size_t>::max();
@@ -106,19 +104,13 @@ int main() {
     BooleanGenerator gen(1.0, 0.7);
 
     size_t counter = 0;
-    std::vector<Bitmask> edge_bitmasks;
-    edge_bitmasks.reserve(nodes_n);
-    for (size_t i = 0; i < nodes_n; i++) {
-        edge_bitmasks.emplace_back(node_connections[i].size(), gen);
-    }
+    Bitmask edge_bitmask(edges_n, gen);
 
     while (not timeout) {
-        dijkstra(node_connections, edge_bitmasks, source_node, target_node, best_blackie_len, best_path);
+        dijkstra(node_connections, edge_bitmask, source_node, target_node, best_blackie_len, best_path);
         gen.change_probability();
 
-        for (auto& edge_bitmask: edge_bitmasks) {
-            edge_bitmask.reshuffle_bits(gen);
-        }
+        edge_bitmask.reshuffle_bits(gen);
         counter++;
     }
 

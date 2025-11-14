@@ -1,12 +1,10 @@
 #include <iostream>
 #include <vector>
-#include <utility>
 #include <thread>
 #include <queue>
 #include <limits>
 #include <atomic>
 #include <algorithm>
-#include <stack>
 
 #include "prime.hpp"
 #include "readInput.hpp"
@@ -56,12 +54,14 @@ void dijkstra(
         const auto [cur_blackie_len, cur_node, cur_edges_n] = to_visit.top();
         to_visit.pop();
 
+        if (cur_node == target_node) break;
+
         times_visited_left[cur_node]--;
         const bool nextEdgePrime = prime_table[cur_edges_n + 1];
 
         if (++iterations % 1000 == 0 and timeout) break;
 
-        for (auto [weight, other_node]: node_connections[cur_node]) {
+        for (auto [weight, other_node, edge_id]: node_connections[cur_node]) {
             if (not times_visited_left[other_node] or not node_bitmask[other_node]) continue;
 
             if (nextEdgePrime) weight *= 3;
@@ -72,7 +72,6 @@ void dijkstra(
             distances[other_node] = new_blackie_len;
             parents[other_node] = cur_node;
 
-            if (other_node == target_node) break;
             to_visit.emplace(new_blackie_len, other_node, cur_edges_n + 1);
         }
     }
@@ -92,9 +91,8 @@ void dijkstra(
 int main() {
 
     task_t task = read_input();
-    auto& [node_connections, source_node, target_node] = task;
+    auto& [node_connections, source_node, target_node, nodes_n, edges_n] = task;
 
-    const size_t nodes_n = node_connections.size();
     std::thread t(timer, 19);
 
     size_t best_blackie_len = std::numeric_limits<size_t>::max();

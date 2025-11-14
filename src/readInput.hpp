@@ -12,6 +12,7 @@ using adjList_t = std::vector<std::vector<edge_t>>;
 struct task_t {
     adjList_t node_connections;
     size_t source_node, target_node;
+    size_t nodes_n, edges_n;
 };
 
 task_t read_input() {
@@ -34,7 +35,7 @@ task_t read_input() {
         node_connections[u].emplace_back(w1, v, i);
         node_connections[v].emplace_back(w2, u, i);
     }
-    return {node_connections, source_node, target_node};
+    return {node_connections, source_node, target_node, nodes_n, edges_n};
 }
 
 

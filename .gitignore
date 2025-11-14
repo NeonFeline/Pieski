@@ -25,10 +25,9 @@ compile_commands.json
 CMakeSettings.json
 temp/
 
-scoring/config.py
+config.py
 *.pyc
 __py*
 
 .idea
 codes/
-

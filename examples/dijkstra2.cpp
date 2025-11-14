@@ -22,7 +22,7 @@ void timer(int seconds) {
 
 
 void dijkstra(
-        const adjList_t& node_connections, const Bitmask& node_bitmask,
+        const adjList_t& node_connections, const std::vector<Bitmask>& edge_bitmasks,
         const size_t source_node, const size_t target_node, 
         size_t& best_blackie_len, std::vector<size_t>& best_path) {
 
@@ -46,8 +46,11 @@ void dijkstra(
 
         if (++iterations % 1000 == 0 and timeout) break;
 
-        for (auto [weight, other_node]: node_connections[cur_node]) {
-            if (not times_visited_left[other_node] or not node_bitmask[other_node]) continue;
+        // for (auto [weight, other_node]: node_connections[cur_node]) {
+        for (size_t i = 0; i < node_connections[cur_node].size(); i++) {
+            auto [weight, other_node] = node_connections[cur_node][i];
+
+            if (not times_visited_left[other_node] or not edge_bitmasks[cur_node][i]) continue;
 
             if (nextEdgePrime) weight *= 3;
             const size_t new_blackie_len = cur_blackie_len + weight;
@@ -85,18 +88,25 @@ int main() {
     size_t best_blackie_len = std::numeric_limits<size_t>::max();
     std::vector<size_t> best_path;
 
-    BooleanGenerator gen(1.0, 0.88);
+    BooleanGenerator gen(1.0, 0.7);
 
     size_t counter = 0;
-    Bitmask node_bitmask(nodes_n, gen);
+    std::vector<Bitmask> edge_bitmasks;
+    edge_bitmasks.reserve(nodes_n);
+    for (size_t i = 0; i < nodes_n; i++) {
+        edge_bitmasks.emplace_back(node_connections[i].size(), gen);
+    }
+
     while (not timeout) {
-        dijkstra(node_connections, node_bitmask, source_node, target_node, best_blackie_len, best_path);
+        dijkstra(node_connections, edge_bitmasks, source_node, target_node, best_blackie_len, best_path);
         gen.change_probability();
 
-        node_bitmask.reshuffle_bits(gen);
-        node_bitmask.set(source_node), node_bitmask.set(target_node);
+        for (auto& edge_bitmask: edge_bitmasks) {
+            edge_bitmask.reshuffle_bits(gen);
+        }
         counter++;
     }
+
     std::cout << counter << " iterations of dijkstra ran\n";
     std::cout << "best blackie len found is " << best_blackie_len << "\n";
 

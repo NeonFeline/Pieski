@@ -4,7 +4,7 @@
 
 constexpr size_t MAX_PRIME = 100000;
 
-static constexpr std::bitset<MAX_PRIME + 1> generatePrimeTable() {
+static constexpr std::bitset<MAX_PRIME + 1> generatePrimeTable() noexcept {
     std::bitset<MAX_PRIME + 1> table;
     table.set();  // Assume all numbers are prime
     table[0] = false;
@@ -20,4 +20,4 @@ static constexpr std::bitset<MAX_PRIME + 1> generatePrimeTable() {
     return table;
 }
 
-auto prime_table = generatePrimeTable();
+constexpr auto prime_table = generatePrimeTable();

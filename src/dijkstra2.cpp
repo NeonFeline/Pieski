@@ -8,10 +8,10 @@
 #include <algorithm>
 #include <stack>
 
-#include "../src/prime.hpp"
-#include "../src/readInput.hpp"
-#include "../src/boolGen.hpp"
-#include "../src/bitmask.hpp"
+#include "prime.hpp"
+#include "readInput.hpp"
+#include "boolGen.hpp"
+#include "bitmask.hpp"
 
 std::atomic<bool> timeout(false);
 

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <fstream>
 
 struct edge_t {
     size_t weight, neighbor, id;
@@ -18,12 +19,16 @@ struct task_t {
 task_t read_input() {
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(nullptr);
+
+    std::string path = "testing/inputs/test24.in";
+    std::ifstream file(path);
+    std::istream& input = file;
     
     size_t nodes_n, edges_n;
-    std::cin >> nodes_n >> edges_n;
+    input >> nodes_n >> edges_n;
     
     size_t source_node, target_node;
-    std::cin >> source_node >> target_node;
+    input >> source_node >> target_node;
     
     adjList_t node_connections(
         nodes_n, std::vector<edge_t> {} // (weight, neighbour)
@@ -31,7 +36,7 @@ task_t read_input() {
     
     for (size_t i = 0; i < edges_n; i++) {
         size_t u, v, w1, w2;
-        std::cin >> u >> v >> w1 >> w2;
+        input >> u >> v >> w1 >> w2;
         node_connections[u].emplace_back(w1, v, i);
         node_connections[v].emplace_back(w2, u, i);
     }

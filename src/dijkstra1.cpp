@@ -61,11 +61,10 @@ void dijkstra(
 
         if (++iterations % 1000 == 0 and timeout) break;
 
-        for (auto [weight, other_node, edge_id]: node_connections[cur_node]) {
+        for (auto [weight, prime_weight, other_node, edge_id]: node_connections[cur_node]) {
             if (not times_visited_left[other_node] or not node_bitmask[other_node]) continue;
 
-            if (nextEdgePrime) weight *= 3;
-            const size_t new_blackie_len = cur_blackie_len + weight;
+            const size_t new_blackie_len = nextEdgePrime ? cur_blackie_len + prime_weight * 3 : cur_blackie_len + weight;
             if (new_blackie_len >= best_blackie_len) continue;
             if (new_blackie_len > distances[other_node]) continue;
 
@@ -98,16 +97,19 @@ int main() {
     size_t best_blackie_len = std::numeric_limits<size_t>::max();
     std::vector<size_t> best_path;
 
-    BooleanGenerator gen(1.0, 0.88);
+    double cur_prob = 1;
+    BooleanGenerator gen(cur_prob);
 
     size_t counter = 0;
     Bitmask node_bitmask(nodes_n, gen);
     while (not timeout) {
         dijkstra(node_connections, node_bitmask, source_node, target_node, best_blackie_len, best_path);
-        gen.change_probability();
 
+        cur_prob = std::max(cur_prob - 0.001, 0.5);
+        gen.dist = std::bernoulli_distribution(cur_prob);
         node_bitmask.reshuffle_bits(gen);
         node_bitmask.set(source_node), node_bitmask.set(target_node);
+        
         counter++;
     }
     std::cout << counter << " iterations of dijkstra ran\n";

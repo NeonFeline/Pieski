@@ -16,7 +16,6 @@ public:
         dist = std::bernoulli_distribution(newProb);
     }
 
-private:
     std::mt19937 rng;                // fast Mersenne Twister RNG
     std::bernoulli_distribution dist; // generates true with probability
     std::uniform_real_distribution<float> probDist;

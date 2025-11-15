@@ -5,7 +5,7 @@
 #include <fstream>
 
 struct edge_t {
-    size_t weight, neighbor, id;
+    size_t weight, prime_weight, neighbor, id;
 };
 
 using adjList_t = std::vector<std::vector<edge_t>>;
@@ -37,8 +37,8 @@ task_t read_input() {
     for (size_t i = 0; i < edges_n; i++) {
         size_t u, v, w1, w2;
         input >> u >> v >> w1 >> w2;
-        node_connections[u].emplace_back(w1, v, i);
-        node_connections[v].emplace_back(w2, u, i);
+        node_connections[u].emplace_back(w1, w2, v, i);
+        node_connections[v].emplace_back(w1, w2, u, i);
     }
     return {node_connections, source_node, target_node, nodes_n, edges_n};
 }
@@ -47,7 +47,7 @@ task_t read_input() {
 void printAdjList(const adjList_t& node_connections) {
     for (size_t i = 0; i < node_connections.size(); i++) {
         std::cout << i << ": ";
-        for (auto [weight, other_node, edge_id]: node_connections[i]) {
+        for (auto [weight, prime_weight, other_node, edge_id]: node_connections[i]) {
             std::cout << other_node << " for " << weight << ", ";
         }
         std::cout << "\n";

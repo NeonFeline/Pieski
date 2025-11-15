@@ -57,13 +57,12 @@ void dijkstra(
         if (++iterations % 1000 == 0 and timeout) break;
 
         for (size_t i = 0; i < node_connections[cur_node].size(); i++) {
-            auto [weight, other_node, edge_id] = node_connections[cur_node][i];
+            auto [weight, prime_weight, other_node, edge_id] = node_connections[cur_node][i];
 
             if (not edge_bitmask[edge_id]) continue;
 
-            if (nextEdgePrime) weight *= 3;
             // size_t new_weight = nextEdgePrime ? weight * 3 : weight;
-            const size_t new_blackie_len = cur_blackie_len + weight;
+            const size_t new_blackie_len = nextEdgePrime ? cur_blackie_len + prime_weight * 3 : cur_blackie_len + weight;
             if (new_blackie_len >= best_blackie_len) continue;
             if (new_blackie_len > distances[other_node]) continue;
 

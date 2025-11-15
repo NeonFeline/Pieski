@@ -40,7 +40,7 @@ void dijkstra(
     std::priority_queue<conn_t> to_visit;
     to_visit.push( {0, source_node, 0} );
 
-    std::vector<size_t> parents (nodes_n, 0);
+    std::vector<int> parents (nodes_n, -1);
     std::vector<size_t> distances (nodes_n, std::numeric_limits<size_t>::max());
     distances[source_node] = 0;
 
@@ -64,7 +64,7 @@ void dijkstra(
             // size_t new_weight = nextEdgePrime ? weight * 3 : weight;
             const size_t new_blackie_len = nextEdgePrime ? cur_blackie_len + prime_weight * 3 : cur_blackie_len + weight;
             if (new_blackie_len >= best_blackie_len) continue;
-            if (new_blackie_len > distances[other_node]) continue;
+            if (new_blackie_len >= distances[other_node]) continue;
 
             distances[other_node] = new_blackie_len;
             parents[other_node] = cur_node;
@@ -77,10 +77,9 @@ void dijkstra(
         best_blackie_len = distances[target_node];
         // std::cout << "new best blackie len is " << best_blackie_len << "\n";
         best_path.clear();
-        for (size_t node = target_node; node != source_node; node = parents[node]) {
+        for (int node = target_node; node != -1; node = parents[node]) {
             best_path.push_back(node);
         }
-        best_path.push_back(source_node); // include the source node
         std::reverse(best_path.begin(), best_path.end()); // path is currently reversed
     }
 }
@@ -97,7 +96,7 @@ int main() {
 
     // BooleanGenerator gen(1.0, 0.7);
     // Bitmask edge_bitmask(edges_n, gen);
-    double cur_prob = 1;
+    double cur_prob = 0.9;
     // std::uniform_real_distribution<double> prob_dist(0.5, 1);
     std::mt19937 rng {std::random_device{}()};
     std::vector<char> edge_bitmask(edges_n, 1);
@@ -109,7 +108,7 @@ int main() {
         
         
         // cur_prob = prob_dist(rng);
-        cur_prob = std::max(cur_prob - 0.001, 0.5);
+        cur_prob = std::max(cur_prob - 0.003, 0.5);
         std::bernoulli_distribution dist(cur_prob);
         for (size_t i = 0; i < edges_n; i++) {
             edge_bitmask[i] = dist(rng);
@@ -120,8 +119,8 @@ int main() {
         counter++;
     }
 
-    std::cout << counter << " iterations of dijkstra ran\n";
-    std::cout << "best blackie len found is " << best_blackie_len << "\n";
+    // std::cout << counter << " iterations of dijkstra ran\n";
+    // std::cout << "best blackie len found is " << best_blackie_len << "\n";
 
     
     t.detach();
@@ -129,7 +128,7 @@ int main() {
     if (best_blackie_len == std::numeric_limits<size_t>::max()) {
         std::cout << "NO PATH" << "\n";
     } else {
-        
+
         std::cout << best_path.size() << "\n";
 
         for (size_t i = 0; i < best_path.size(); i++) {

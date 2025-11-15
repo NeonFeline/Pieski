@@ -5,6 +5,7 @@
 #include <limits>
 #include <atomic>
 #include <algorithm>
+#include <cmath>
 
 #include "prime.hpp"
 #include "readInput.hpp"
@@ -20,7 +21,7 @@ void timer(int seconds) {
 
 
 void dijkstra(
-        const adjList_t& node_connections, const Bitmask& edge_bitmask,
+        const adjList_t& node_connections, const std::vector<char>& edge_bitmask,
         const size_t source_node, const size_t target_node, 
         size_t& best_blackie_len, std::vector<size_t>& best_path) {
 
@@ -30,11 +31,6 @@ void dijkstra(
         size_t current_blackie_len;
         size_t next_node;
         size_t cur_edges_n;
-
-        conn_t(size_t current_blackie_len, size_t next_node, size_t cur_edges_n) : 
-            current_blackie_len(current_blackie_len), 
-            next_node(next_node),
-            cur_edges_n(cur_edges_n) {}
 
         bool operator<(const conn_t& other) const {
             return current_blackie_len > other.current_blackie_len; 
@@ -46,7 +42,6 @@ void dijkstra(
 
     std::vector<size_t> parents (nodes_n, 0);
     std::vector<size_t> distances (nodes_n, std::numeric_limits<size_t>::max());
-    std::vector<int> times_visited_left (nodes_n, 1);
     distances[source_node] = 0;
 
     size_t iterations = 0;
@@ -55,19 +50,19 @@ void dijkstra(
         to_visit.pop();
 
         if (cur_node == target_node) break;
+        if (distances[cur_node] != cur_blackie_len) continue;
 
-        times_visited_left[cur_node]--;
         const bool nextEdgePrime = prime_table[cur_edges_n + 1];
 
         if (++iterations % 1000 == 0 and timeout) break;
 
-        // for (auto [weight, other_node]: node_connections[cur_node]) {
         for (size_t i = 0; i < node_connections[cur_node].size(); i++) {
             auto [weight, other_node, edge_id] = node_connections[cur_node][i];
 
-            if (not times_visited_left[other_node] or not edge_bitmask[edge_id]) continue;
+            if (not edge_bitmask[edge_id]) continue;
 
             if (nextEdgePrime) weight *= 3;
+            // size_t new_weight = nextEdgePrime ? weight * 3 : weight;
             const size_t new_blackie_len = cur_blackie_len + weight;
             if (new_blackie_len >= best_blackie_len) continue;
             if (new_blackie_len > distances[other_node]) continue;
@@ -101,16 +96,28 @@ int main() {
     size_t best_blackie_len = std::numeric_limits<size_t>::max();
     std::vector<size_t> best_path;
 
-    BooleanGenerator gen(1.0, 0.7);
+    // BooleanGenerator gen(1.0, 0.7);
+    // Bitmask edge_bitmask(edges_n, gen);
+    double cur_prob = 1;
+    // std::uniform_real_distribution<double> prob_dist(0.5, 1);
+    std::mt19937 rng {std::random_device{}()};
+    std::vector<char> edge_bitmask(edges_n, 1);
 
     size_t counter = 0;
-    Bitmask edge_bitmask(edges_n, gen);
 
     while (not timeout) {
         dijkstra(node_connections, edge_bitmask, source_node, target_node, best_blackie_len, best_path);
-        gen.change_probability();
+        
+        
+        // cur_prob = prob_dist(rng);
+        cur_prob = std::max(cur_prob - 0.001, 0.5);
+        std::bernoulli_distribution dist(cur_prob);
+        for (size_t i = 0; i < edges_n; i++) {
+            edge_bitmask[i] = dist(rng);
+        }
 
-        edge_bitmask.reshuffle_bits(gen);
+        // gen.change_probability();
+        // edge_bitmask.reshuffle_bits(gen);
         counter++;
     }
 

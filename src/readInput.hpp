@@ -20,9 +20,9 @@ task_t read_input() {
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(nullptr);
 
-    std::string path = "testing/inputs/test24.in";
-    std::ifstream file(path);
-    std::istream& input = file;
+    // std::string path = "testing/inputs/test24.in";
+    // std::ifstream file(path);
+    std::istream& input = std::cin;
     
     size_t nodes_n, edges_n;
     input >> nodes_n >> edges_n;

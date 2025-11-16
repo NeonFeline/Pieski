@@ -6,11 +6,10 @@
 #include <atomic>
 #include <algorithm>
 #include <cmath>
+#include <random>
 
 #include "prime.hpp"
 #include "readInput.hpp"
-#include "boolGen.hpp"
-#include "bitmask.hpp"
 
 std::atomic<bool> timeout(false);
 
@@ -40,7 +39,7 @@ void dijkstra(
     std::priority_queue<conn_t> to_visit;
     to_visit.push( {0, source_node, 0} );
 
-    std::vector<int> parents (nodes_n, -1);
+    std::vector<size_t> parents (nodes_n, std::numeric_limits<size_t>::max());
     std::vector<size_t> distances (nodes_n, std::numeric_limits<size_t>::max());
     distances[source_node] = 0;
 
@@ -61,7 +60,6 @@ void dijkstra(
 
             if (not edge_bitmask[edge_id]) continue;
 
-            // size_t new_weight = nextEdgePrime ? weight * 3 : weight;
             const size_t new_blackie_len = nextEdgePrime ? cur_blackie_len + prime_weight * 3 : cur_blackie_len + weight;
             if (new_blackie_len >= best_blackie_len) continue;
             if (new_blackie_len >= distances[other_node]) continue;
@@ -75,11 +73,12 @@ void dijkstra(
 
     if (distances[target_node] < best_blackie_len) {
         best_blackie_len = distances[target_node];
-        // std::cout << "new best blackie len is " << best_blackie_len << "\n";
+
         best_path.clear();
-        for (int node = target_node; node != -1; node = parents[node]) {
+        for (size_t node = target_node; node != source_node; node = parents[node]) {
             best_path.push_back(node);
         }
+        best_path.push_back(source_node);
         std::reverse(best_path.begin(), best_path.end()); // path is currently reversed
     }
 }
@@ -89,15 +88,12 @@ int main() {
     task_t task = read_input();
     auto& [node_connections, source_node, target_node, nodes_n, edges_n] = task;
 
-    std::thread t(timer, 19);
+    std::thread t(timer, 179);
 
     size_t best_blackie_len = std::numeric_limits<size_t>::max();
     std::vector<size_t> best_path;
-
-    // BooleanGenerator gen(1.0, 0.7);
-    // Bitmask edge_bitmask(edges_n, gen);
+    
     double cur_prob = 0.9;
-    // std::uniform_real_distribution<double> prob_dist(0.5, 1);
     std::mt19937 rng {std::random_device{}()};
     std::vector<char> edge_bitmask(edges_n, 1);
 
@@ -106,16 +102,12 @@ int main() {
     while (not timeout) {
         dijkstra(node_connections, edge_bitmask, source_node, target_node, best_blackie_len, best_path);
         
-        
-        // cur_prob = prob_dist(rng);
         cur_prob = std::max(cur_prob - 0.003, 0.5);
         std::bernoulli_distribution dist(cur_prob);
         for (size_t i = 0; i < edges_n; i++) {
             edge_bitmask[i] = dist(rng);
         }
 
-        // gen.change_probability();
-        // edge_bitmask.reshuffle_bits(gen);
         counter++;
     }
 

@@ -7,9 +7,65 @@
 #include <algorithm>
 #include <cmath>
 #include <random>
+#include <bitset>
 
-#include "prime.hpp"
-#include "readInput.hpp"
+constexpr size_t MAX_PRIME = 100000;
+
+constexpr std::bitset<MAX_PRIME + 1> generate_prime_table() noexcept {
+    std::bitset<MAX_PRIME + 1> table;
+    table.set();
+    table[0] = false;
+    table[1] = false;
+
+    for (size_t i = 2; i * i <= MAX_PRIME; ++i) {
+        if (table[i]) {
+            for (size_t j = i * i; j <= MAX_PRIME; j += i)
+                table[j] = false;
+        }
+    }
+
+    return table;
+}
+
+constexpr auto prime_table = generate_prime_table();
+
+struct edge_t {
+    size_t weight, prime_weight, neighbor;
+    uint64_t id;
+};
+
+using adjList_t = std::vector<std::vector<edge_t>>;
+
+struct task_t {
+    adjList_t node_connections;
+    size_t source_node, target_node;
+    size_t nodes_n, edges_n;
+};
+
+task_t read_input() {
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+
+    std::istream& input = std::cin;
+    
+    size_t nodes_n, edges_n;
+    input >> nodes_n >> edges_n;
+    
+    size_t source_node, target_node;
+    input >> source_node >> target_node;
+    
+    adjList_t node_connections(
+        nodes_n, std::vector<edge_t> {} // (weight, neighbour)
+    );
+    
+    for (size_t i = 0; i < edges_n; i++) {
+        size_t u, v, w1, w2;
+        input >> u >> v >> w1 >> w2;
+        node_connections[u].emplace_back(w1, w2, v, i);
+        node_connections[v].emplace_back(w1, w2, u, i);
+    }
+    return {node_connections, source_node, target_node, nodes_n, edges_n};
+}
 
 std::atomic<bool> timeout(false);
 
@@ -88,7 +144,7 @@ int main() {
     task_t task = read_input();
     auto& [node_connections, source_node, target_node, nodes_n, edges_n] = task;
 
-    std::thread t(timer, 179);
+    std::thread t(timer, 19);
 
     size_t best_blackie_len = std::numeric_limits<size_t>::max();
     std::vector<size_t> best_path;
@@ -111,24 +167,16 @@ int main() {
         counter++;
     }
 
-    // std::cout << counter << " iterations of dijkstra ran\n";
-    // std::cout << "best blackie len found is " << best_blackie_len << "\n";
-
     
     t.detach();
 
-    if (best_blackie_len == std::numeric_limits<size_t>::max()) {
-        std::cout << "NO PATH" << "\n";
-    } else {
+    std::cout << best_path.size() << "\n";
 
-        std::cout << best_path.size() << "\n";
-
-        for (size_t i = 0; i < best_path.size(); i++) {
-            if (i > 0) std::cout << " ";
-            std::cout << best_path[i];
-        }
-        std::cout << "\n";
+    for (size_t i = 0; i < best_path.size(); i++) {
+        if (i > 0) std::cout << " ";
+        std::cout << best_path[i];
     }
+    std::cout << "\n";
     
     return 0;
 }

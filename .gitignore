@@ -31,3 +31,4 @@ __py*
 
 .idea
 codes/
+.DS_Store

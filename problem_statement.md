@@ -33,8 +33,8 @@ If the found path is correct, your program will obtain points equal to the numbe
 ---
 
 # Example Input
-```
-5 7
+
+5 7 
 0 1
 0 4
 1 2

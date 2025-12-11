@@ -33,7 +33,7 @@ If the found path is correct, your program will obtain points equal to the numbe
 ---
 
 # Example Input
-
+```
 5 7
 0 1
 0 4
@@ -42,17 +42,18 @@ If the found path is correct, your program will obtain points equal to the numbe
 1 4
 2 3
 3 4
-
+```
 ---
 
 # Example Output
-
+```
 4
 2 3 4 0
-
+```
 
 ---
 
 # Example Score
-
+```
 4
+```
